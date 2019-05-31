@@ -1,0 +1,47 @@
+1
+(section 1)(ans4) What is the circumference of the earth? (Hint: It's not 0)
+4
+600km
+30m
+45cm
+100km
+
+1
+(section 1)(ans 3) What is the diameter of the moon?
+3
+40cm
+33in
+I don't care
+I don't know
+
+2
+(section 2)(ans2) What is the name of The Beatles' third studio album?
+2
+Monkey
+No name
+72ft of the ground
+I'm not a hippie
+
+2
+(section 2)(ans 2) What is the name of Spongebob's pet?
+2
+Michael Jackson
+Gary
+Phineas
+Mona Lisa
+
+3
+(section 3)(ans 3) In which direction does the sun rise in the planet Krypton?
+3
+What?!
+South
+North
+East
+
+3
+(section 3)(ans 2) What is spider pig's height?
+2
+1 inch
+40 feet
+2.6 feet
+3 inches
