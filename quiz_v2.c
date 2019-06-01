@@ -4,7 +4,7 @@
 
 #define MAX_QUESTIONS 100
 #define SCORE_POINTS 10
-#define MAX_SECTION_SIZE 5
+#define CATEGORY_MAX_QUESTIONS 5
 #define CATEGORY_COUNT 3
 #define CATEGORY_NAMES {"General Knowledge", "Music", "Sports"}
 
@@ -30,8 +30,8 @@ int main() {
 	FILE *questions_file;
 	struct question questions[MAX_QUESTIONS];
 	unsigned int questions_read = 0;
-	/* int entered_option = -1; */
 	char* question_categories[CATEGORY_COUNT] = CATEGORY_NAMES;
+	int all_entered_answers[CATEGORY_COUNT][CATEGORY_MAX_QUESTIONS];
 
 	questions_file = fopen("questions_v2.txt", "r");
 	if (questions_file) {
@@ -93,21 +93,22 @@ int main() {
 			} else {
 				// 10 is the newline character thingy. At least in linux, don't know about windows.
 				if (*temp_line != 10) {
-					printf("Something is wrong with the formatting of the questions_file.\n");
-					printf("Got %d instead of empty line.\n", *temp_line);
+					printf("ERROR: Something is wrong with the formatting of the questions_file.\n");
+					printf("\tGot %d instead of empty line.\n", *temp_line);
 				}
 			}
 		}
 	}
+
 	fclose(questions_file);
 
 	// We will seperate the questions into different array based on the sections
-	struct question divided_questions[CATEGORY_COUNT][MAX_SECTION_SIZE];
+	struct question divided_questions[CATEGORY_COUNT][CATEGORY_MAX_QUESTIONS];
 	int divided_questions_sizes[CATEGORY_COUNT];
-	int category_sequences[CATEGORY_COUNT][MAX_SECTION_SIZE];
+	int category_sequences[CATEGORY_COUNT][CATEGORY_MAX_QUESTIONS];
 
 	for (int j = 0; j < CATEGORY_COUNT; j++) {
-		struct question temp_category_questions[MAX_SECTION_SIZE];
+		struct question temp_category_questions[CATEGORY_MAX_QUESTIONS];
 		int temp_category_size = 0;
 		for (int i = 0; i < questions_read; i++) {
 			if (questions[i].category == j+1) {
@@ -116,20 +117,13 @@ int main() {
 			}
 		}
 		divided_questions_sizes[j] = temp_category_size;
-		/* int temp_sequence[temp_category_size]; */
-		/* shuffle_array(&temp_sequence, temp_category_size); */
-		/* category_sequences[j] = &temp_sequence; */
 		shuffle_array(category_sequences[j], temp_category_size);
 	}
 
-	/* printf("printgin\n"); */
-	/* for (int t=0; t<CATEGORY_COUNT; t++){ */
-		/* for (int i=0; i<divided_questions_sizes[0]; i++){ */
-			/* printf("%d, ",category_sequences[0][i]); */
-		/* } */
-		/* printf("\n"); */
-	/* } */
-	int all_entered_answers[CATEGORY_COUNT][MAX_SECTION_SIZE];
+	int section_score[CATEGORY_COUNT];
+	int section_correct_answers_count[CATEGORY_COUNT];
+	int total_correct_answers_count = 0;
+	int total_score = 0;
 
 	for (int q = 0; q < CATEGORY_COUNT; q++) {
 		printf("\n=================== %s section =============================\n", question_categories[q]);
@@ -141,71 +135,58 @@ int main() {
 			printf("\t3) %s", divided_questions[q][category_sequences[q][j]].option_3);
 			printf("\t4) %s", divided_questions[q][category_sequences[q][j]].option_4);
 
-			do {
-				printf("Please enter your answer (1, 2, 3 or 4): ");
-				scanf("%d", &all_entered_answers[q][j]);
-			} while (all_entered_answers[q][j] < 1 || all_entered_answers[q][j]  > 4);
+			printf("Please enter your answer: ");
+			while (scanf("%d",&all_entered_answers[q][j]) != 1 || all_entered_answers[q][j] < 1 || all_entered_answers[q][j]  > 4) {
+				printf("Please enter a valid option (1, 2, 3 or 4): ");
+				// Asterisk * tells scanf to read and ignore the value
+				scanf("%*s");
+			}
 
-			/* if (entered_option == divided_questions[q][category_sequences[q][j]].answer) { */
-				/* printf("Your answer is correct!\n"); */
-				/* total_score += SCORE_POINTS; */
-				/* correct_answers_count++; */
-			/* } else { */
-				/* printf("Sorry, your answer is incorrect. The correct answer is %d.\n", divided_questions[q][category_sequences[q][j]].answer); */
-				/* wrong_answers_count++; */
-			/* } */
-
-			// Resetting entered_option
-			/* entered_option = -1; */
+			if (all_entered_answers[q][j] == divided_questions[q][category_sequences[q][j]].answer) {
+				section_score[q] += SCORE_POINTS;
+				section_correct_answers_count[q]++;
+			}
 		}
 
 		printf("You have completed this section successfully!\n");
 	}
 
 	printf("\n\n================================================================================\n");
-	printf("Your quiz is complete. Thanks for taking the quiz.\n");
+	printf("Congratulations. You have completed the quiz.\n");
+	printf("You have got %d correct out of %d questions.\n", total_correct_answers_count, questions_read);
 
-	printf("\n================================================================================\n");
-	printf("Section wise analysis:\n\n");
+	printf("\nHere are your answers:\n");
 
 	for (int q = 0; q < CATEGORY_COUNT; q++) {
-		unsigned int total_score = 0;
-		unsigned int correct_answers_count = 0;
-		unsigned int wrong_answers_count = 0;
-
-		printf("\n=================== %s section =============================\n", question_categories[q]);
+		printf("\nQuestion Category: %s\n", question_categories[q]);
 		for(int j = 0; j < divided_questions_sizes[q]; j++) {
-			printf("\nQuestion %d: %s", j+1, divided_questions[q][category_sequences[q][j]].statement);
-			printf("\t1) %s", divided_questions[q][category_sequences[q][j]].option_1);
-			printf("\t2) %s", divided_questions[q][category_sequences[q][j]].option_2);
-			printf("\t3) %s", divided_questions[q][category_sequences[q][j]].option_3);
-			printf("\t4) %s", divided_questions[q][category_sequences[q][j]].option_4);
+			int temp_marks_awarded = 0;
+			printf("\nQuestion: %s", divided_questions[q][category_sequences[q][j]].statement);
+			printf("\tCorrect Answer: %d\n", divided_questions[q][category_sequences[q][j]].answer);
+			printf("\tYour Answer: %d\n", all_entered_answers[q][j]);
 
 			if (all_entered_answers[q][j] == divided_questions[q][category_sequences[q][j]].answer) {
-				printf("Your answer %d is correct!\n", all_entered_answers[q][j]);
-				total_score += SCORE_POINTS;
-				correct_answers_count++;
-			} else {
-				printf("Sorry, your answer %d is incorrect. The correct answer is %d.\n", all_entered_answers[q][j], divided_questions[q][category_sequences[q][j]].answer);
-				wrong_answers_count++;
+				temp_marks_awarded = SCORE_POINTS;
 			}
+
+			printf("\tMarks Awarded: %d\n", temp_marks_awarded);
 		}
 
-		printf("================================================================================\n");
-		printf("You've answered %d questions correctly and %d questions incorrectly in this section.\n", correct_answers_count, wrong_answers_count);
-		printf("You've scored %d points in this section\n", total_score);
-
+		total_score += section_score[q];
 	}
+
+	printf("\nCategory Wise Marks:\n");
+	for (int m = 0; m < CATEGORY_COUNT; m++){
+		printf("\t%s: %d\n", question_categories[m], section_score[m]);
+	}
+
+	printf("Your Final Total Score: %d out of %d", total_score, questions_read * SCORE_POINTS);
 
 	return 0;
 }
 
 // Takes an empty array, initialized it with sequential numbers and then shuffles the numbers
 void shuffle_array(int* array, int array_size) {
-	/* printf("\ngtot array\n"); */
-	/* for(int k=0; k<array_size;k++){ */
-		/* printf("%d, ", array[k]); */
-	/* } */
 	// Time for seed of random number
 	time_t time_value;
 	// Initializing random number generator
@@ -223,10 +204,4 @@ void shuffle_array(int* array, int array_size) {
 		array[i] = array[random_index];
 		array[random_index] = temp_element;
 	}
-
-	/* printf("\nchanged to gtot array\n"); */
-	/* for(int k=0; k<array_size;k++){ */
-		/* printf("%d, ", array[k]); */
-	/* } */
-	/* printf("done\n\n"); */
 }
