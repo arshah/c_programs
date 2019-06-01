@@ -14,6 +14,30 @@
 I don't care
 I don't know
 
+1
+(section 1)(ans 4) What is PewDiePie's pug's name?
+4
+Hassan
+Toby
+Cow Protection Group
+Traditional Frog
+
+1
+(section 1)(ans 1) Where is the the HQ of Yogendra Yadav?
+1
+North Pole
+Deep steak
+India
+Heated party
+
+1
+(section 1)(ans 3) What is the most popular sport ever televised?
+3
+Billy bob
+Ice skating
+Moon landing
+Hollow rising
+
 2
 (section 2)(ans2) What is the name of The Beatles' third studio album?
 2
