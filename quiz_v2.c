@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #define MAX_QUESTIONS 100
 #define SCORE_POINTS 10
-#define CATEGORY_MAX_QUESTIONS 4
+#define CATEGORY_MAX_QUESTIONS 10
 #define CATEGORY_COUNT 3
 #define CATEGORY_NAMES {"General Knowledge", "Music", "Sports"}
 
@@ -38,54 +39,63 @@ int main() {
 	srand((unsigned) time(&time_value));
 
 	questions_file = fopen("questions_v2.txt", "r");
-
 	if (questions_file) {
 		char *temp_char;
+		char chunk[1024];
 		for (int i = 0; i < MAX_QUESTIONS; i++) {
 			// Reading the category of the question
-			if((read_size = getline(&temp_char, &len, questions_file)) == -1) {
+			if(fgets(chunk, sizeof(chunk), questions_file) == NULL) {
 				printf("ERROR: Reached end of questions_file without reading the category.\n");
 				break;
 			} else {
-				questions[i].category = *temp_char - '0';
+				questions[i].category = *chunk - '0';
 			}
 
 			// Reading the question
-			if((read_size = getline(&questions[i].statement, &len, questions_file)) == -1) {
+			if(fgets(chunk, sizeof(chunk), questions_file) == NULL) {
 				printf("ERROR: Reached end of questions_file without reading the question.\n");
 				break;
+			} else {
+				questions[i].statement = malloc(sizeof(chunk));
+				strcpy(questions[i].statement, chunk);
 			}
 
 			// Reading the correct answer
-			if((read_size = getline(&temp_char, &len, questions_file)) == -1) {
+			if(fgets(chunk, sizeof(chunk), questions_file) == NULL) {
 				printf("ERROR: Reached end of questions_file without reading the correct answer.\n");
 				break;
 			} else {
-				questions[i].answer = *temp_char - '0';
+				questions[i].answer = *chunk - '0';
+				/* questions[i].category = *chunk - '0'; */
 			}
 
-			// Reading option 1
+			// Reading options
 			for(int t = 1; t <= 4; t++) {
-				if((read_size = getline(&questions[i].options[t], &len, questions_file)) == -1) {
+				if(fgets(chunk, sizeof(chunk), questions_file) == NULL) {
 					printf("ERROR: Reached end of questions_file without reading all options.\n");
 					break;
+				} else {
+					questions[i].options[t] = malloc(sizeof(chunk));
+					strcpy(questions[i].options[t], chunk);
 				}
 			}
 
 			questions_read++;
 
 			// Reading empty space (this also serves as a format check)
-			if((read_size = getline(&temp_line, &len, questions_file)) == -1) {
+			if(fgets(chunk, sizeof(chunk), questions_file) == NULL) {
 				printf("Questions loaded successfully. Your Quiz beings now.\n");
 				break;
 			} else {
 				// 10 is the newline character thingy. At least in linux, don't know about windows.
-				if (*temp_line != 10) {
+				if (*chunk != 10) {
 					printf("ERROR: Something is wrong with the formatting of the questions_file.\n");
 					printf("\tGot %d instead of empty line.\n", *temp_line);
 				}
 			}
 		}
+	} else {
+		printf("ERROR: Connot open file to read.\n");
 	}
 
 	fclose(questions_file);
@@ -169,15 +179,15 @@ int main() {
 		printf("Your Final Total Score: %d out of %d\n", total_score, questions_read * SCORE_POINTS);
 
 		// Reading out any characters from stream.
-		scanf("%*s");
 		printf("Press any key to go to main menu.\n");
+		scanf("%*s");
 		scanf("%c", &restart_key);
 	} while (restart_key != '\0');
 
 	return 0;
 }
 
-// Takes an empty array, initialized it with sequential numbers and then shuffles the numbers
+// Takes an empty array, initializes it with sequential numbers and then shuffles the numbers
 void shuffle_array(int* array, int array_size) {
 	// Populating the array with sequential numbers starting from 0
 	for (int i = 0; i < array_size; i++) {
