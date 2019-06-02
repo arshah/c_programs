@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 
-#define MAX_QUESTIONS 100
+#define MAX_QUESTIONS 10
 #define SCORE_POINTS 10
 #define CATEGORY_MAX_QUESTIONS 10
 #define CATEGORY_COUNT 3
@@ -20,12 +20,6 @@ struct question {
 };
 
 int main() {
-
-	// For readin line from file
-	ssize_t read_size;
-	size_t len = 0;
-
-	char *temp_line = NULL;
 	FILE *questions_file;
 	struct question questions[MAX_QUESTIONS];
 	unsigned int questions_read = 0;
@@ -90,7 +84,7 @@ int main() {
 				// 10 is the newline character thingy. At least in linux, don't know about windows.
 				if (*chunk != 10) {
 					printf("ERROR: Something is wrong with the formatting of the questions_file.\n");
-					printf("\tGot %d instead of empty line.\n", *temp_line);
+					printf("\tGot %d instead of empty line.\n", *chunk);
 				}
 			}
 		}
@@ -118,8 +112,8 @@ int main() {
 			shuffle_array(category_sequences[j], temp_category_size);
 		}
 
-		int category_wise_score[CATEGORY_COUNT];
-		int category_correct_answers_count[CATEGORY_COUNT];
+		int category_wise_score[CATEGORY_COUNT] = {0};
+		int category_correct_answers_count[CATEGORY_COUNT] = {0};
 		int total_correct_answers_count = 0;
 		int total_score = 0;
 
