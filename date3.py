@@ -30,7 +30,7 @@ def validate(date_text):
 # Get user input date and pass it to other functions
 
 import re
-userdate = input("Enter the date")
+userdate = input("Enter the date ")
 validate(userdate)
 c1 = '-'
 c2 = '/'
