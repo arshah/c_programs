@@ -1,2 +1,2 @@
-# c_programs
-some practice c programs
+# Practice Programs
+Some practice programs, not necessarily written in C.
