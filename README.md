@@ -9,5 +9,5 @@ input_words = ["female", "spotless", "arrange", "equal", "penultimate", "equanim
 ```
 Sample outputs:
 
-![crossword_sample_1](https://github.com/arshah/random-code/tree/master/python_code/crossword_generator/sample_output_1.png "Sample output 1")
-![crossword_sample_2](https://github.com/arshah/random-code/tree/master/python_code/crossword_generator/sample_output_2.png "Sample output 2")
+![crossword_sample_1](/python_code/crossword_generator/sample_output_1.png?raw=true)
+![crossword_sample_2](/python_code/crossword_generator/sample_output_2.png?raw=true)
