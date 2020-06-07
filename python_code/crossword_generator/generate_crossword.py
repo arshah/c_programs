@@ -19,7 +19,8 @@ def generate_crossword(solution_words):
     # first word will be placed randomly
     pos_x = random.randint(0, grid_size-1)
     pos_y = random.randint(0, grid_size-1)
-    solution_words = scramble_list(solution_words)
+    # placing the longest words first in hopes of generating maximum intersections
+    solution_words = sort_according_to_length(solution_words)
     curr_word = solution_words[0]
     solution_words.remove(curr_word)
     is_place_horizontally = True if random.randint(0, 1) == 0 else False
@@ -279,6 +280,17 @@ def scramble_list(list_to_scramble):
         new_list.append(temp_item)
         list_to_scramble.remove(temp_item)
 
+    return new_list
+
+def sort_according_to_length(list_to_sort):
+    new_list = []
+    while len(list_to_sort) > 0:
+        longest_word = ''
+        for word in list_to_sort:
+            if len(word) > len(longest_word):
+                longest_word = word
+        new_list.append(longest_word)
+        list_to_sort.remove(longest_word)
     return new_list
 
 def trim_edges():
